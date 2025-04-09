@@ -7,15 +7,37 @@ const ComposeModal = ({ onClose, onSend }) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = () => {
-    // Simulate spam classification API result
-    const isSpam = form.body.toLowerCase().includes('win money');
-    onSend({ ...form, isSpam });
-    onClose();
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/classify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: form.body }),
+      });
+
+      const data = await response.json();
+      const isSpam = data.email_body_classification === 'phishing';
+      const linkMatch = form.body.match(/https?:\/\/[\w./?=#]+/);
+
+      const email = {
+        ...form,
+        isSpam,
+        link: linkMatch ? linkMatch[0] : null,
+        isMaliciousLink: isSpam && data.link_analysis?.prediction === '1'
+      };
+
+      onSend(email);
+      onClose();
+    } catch (error) {
+      console.error('Error calling classification API:', error);
+      alert('Failed to classify email.');
+    }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black/5 flex justify-center items-center z-50">
       <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
         <h2 className="text-xl font-bold mb-4">Compose Email</h2>
         <input className="w-full mb-2 p-2 border rounded" name="subject" placeholder="Subject" onChange={handleChange} />

@@ -17,6 +17,11 @@ const EmailDetails = ({ email }) => {
       <div className={`mt-2 p-2 rounded ${email.isSpam ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
         {email.isSpam ? '🚫 This email is classified as SPAM' : '✅ This email is NOT SPAM'}
       </div>
+      {email.link && (
+        <div className={`mt-2 p-2 rounded ${email.isMaliciousLink ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+          {email.isMaliciousLink ? '🔗 Link is MALICIOUS' : '🔗 Link is SAFE'}
+        </div>
+      )}
     </div>
   );
 };
