@@ -9,7 +9,7 @@ const ComposeModal = ({ onClose, onSend }) => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/classify', {
+      const response = await fetch('https://atr-api-v2-abdul.azurewebsites.net/api/classify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
